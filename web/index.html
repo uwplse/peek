@@ -8,36 +8,44 @@
   <body>
 	<h1>Peek</h1>
 	<h2 id="motto">Verified Peephole Optimizations for CompCert</h2>
+	<a href="http://conf.researchr.org/event/pldi-2016/pldi-2016-papers-verified-peephole-optimizations-for-compcert-">PLDI 2016</a>
 	<div id="intro">
-		<h3>Introduction</h3>
+		<h3>Abstract</h3>
 		<p>
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur sagittis eros sed mi efficitur tristique. Pellentesque pulvinar, lorem vitae ullamcorper volutpat, lectus ex mollis odio, iaculis pellentesque quam lorem eget dui. Praesent hendrerit efficitur condimentum. Curabitur ullamcorper augue eget urna vehicula auctor. Etiam arcu diam, congue vel turpis in, hendrerit ullamcorper orci. Nullam id dui vel nulla ornare congue. Praesent luctus augue vel vehicula tempor. Morbi rhoncus, enim vel porttitor facilisis, erat ipsum interdum quam, ut iaculis dui nisi ut odio. Maecenas metus erat, iaculis tempus felis vestibulum, semper molestie nisi. Vestibulum commodo aliquet molestie.
+			Transformations over assembly code are common in many compilers. Such transformations are useful in applications ranging from peephole optimizations to software fault iso- lation. These transformations are also some of the most bug-dense compiler components [12]. Such bugs could be eliminated by formally verifying the compiler, but state- of-the-art formally verified compilers like CompCert do not support assembly-level program transformations. This paper presents Peek, a framework for expressing, verify- ing, and running assembly-level program transformations in CompCert. Peek contributes four new components: a lower level semantics for CompCert x86 syntax, a liveness anal- ysis, a library for expressing and verifying peephole opti- mizations, and a verified peephole optimization pass built into CompCert. Each of these is accompanied by a correct- ness proof in Coq against realistic assumptions about the calling convention and the system memory allocator.
+			<br>
+			Verifying peephole optimizations in Peek requires prov- ing only a set of local properties, which we have proved are sufficient to ensure global transformation correctness. We have proven these local properties for 26 peephole transfor- mations from the literature. We discuss the development of our new assembly semantics, our liveness analysis, repre- sentation of program transformations, and execution engine, describe the verification challenges of each component, and detail techniques we applied to mitigate the proof burden.
 		</p>
 	</div>
-	
-
-	
-	<div id="people">
-		<h3>People</h3>
 		
-		<p>
-		<a href="//homes.cs.washington.edu/~emullen/"><img src="http://homes.cs.washington.edu/~emullen/Eric_Mullen.jpg" style="top:-20px;"/>
+	<div id="people">
+		<h3>People</h3>	
+
+		<p class="person">
+		<a href="http://homes.cs.washington.edu/~emullen/"><img src="http://homes.cs.washington.edu/~emullen/Eric_Mullen.jpg" style="top:-20px;"/>
 		<br />
 		<span class="caption">Eric Mullen</span></a>
-		<p>
-		<a href="//homes.cs.washington.edu/~emullen/"><img src="http://25.media.tumblr.com/tumblr_m5xzooJASo1rw58cso1_r1_400.jpg" style="top:-20px;"/>
+		</p>
+
+		<p class="person">
+		<a href="http://www.darzu.io/"><img src="http://www.darzu.io/images/croatia.jpg" style="top:-20px;"/>
 		<br />
-		<span class="caption">Someone else</span></a>
+		<span class="caption">Daryl Zuniga</span></a>
+		</p>
+
+		<p class="person">
+		<a href="https://homes.cs.washington.edu/~ztatlock/"><img src="https://homes.cs.washington.edu/~ztatlock/img/zachary-tatlock-rickshaw.jpg" style="top:-20px;"/>
+		<br />
+		<span class="caption">Zach Tatlock</span></a>
+		</p>
+
+		<p class="person">
+		<a href="http://homes.cs.washington.edu/~djg/"><img src="http://homes.cs.washington.edu/~djg/grossman2013.jpg" style="top:-20px;"/>
+		<br />
+		<span class="caption">Dan Grossman</span></a>
 		</p>
 	
 	</div>
-	
-	<blockquote>
-	Transformations over assembly code are common in many compilers. Such transformations are useful in applications ranging from peephole optimizations to software fault iso- lation. These transformations are also some of the most bug-dense compiler components [12]. Such bugs could be eliminated by formally verifying the compiler, but state- of-the-art formally verified compilers like CompCert do not support assembly-level program transformations. This paper presents Peek, a framework for expressing, verify- ing, and running assembly-level program transformations in CompCert. Peek contributes four new components: a lower level semantics for CompCert x86 syntax, a liveness anal- ysis, a library for expressing and verifying peephole opti- mizations, and a verified peephole optimization pass built into CompCert. Each of these is accompanied by a correct- ness proof in Coq against realistic assumptions about the calling convention and the system memory allocator.
-	Verifying peephole optimizations in Peek requires prov- ing only a set of local properties, which we have proved are sufficient to ensure global transformation correctness. We have proven these local properties for 26 peephole transfor- mations from the literature. We discuss the development of our new assembly semantics, our liveness analysis, repre- sentation of program transformations, and execution engine, describe the verification challenges of each component, and detail techniques we applied to mitigate the proof burden.
-	</blockquote>
-	
-	
-	<div id="
+
   </body>
 </html>

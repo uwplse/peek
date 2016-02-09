@@ -3,7 +3,7 @@ html {font-family: sans-serif;}
 body {min-width: 400px; max-width: 650px; margin: 3em auto;}
 
 h1, h2, h3, h4{letter-spacing: .125em; font-weight: 600;}
-h1 {font-size: 18px; line-height: 1; margin: 1.5em 0 .5em 0;}
+h1 {font-size: 24px; line-height: 1; margin: 1.5em 0 .5em 0;}
 h2 {font-size: 16px; line-height: 1.125; margin: 1em 0 .25em 0; clear: both;}
 h3 {font-size: 14px; line-height: 1.286; margin: 1em 0 .2em 0; clear: both;}
 h4 {font-size: 12px; line-height: 1.4; margin: 1em 0 .175em 0;
@@ -28,7 +28,7 @@ a {color: #2A6496; text-decoration: none}
 a:hover {text-decoration: underline; color: #295785}
 
 img {
-	max-width: 150px;
+	max-width: 140px;
 }
 
 .milestone {
@@ -43,4 +43,8 @@ img {
 
 #motto p {
 	font-size: 10pt;
+}
+
+.person {
+  float:left;
 }
