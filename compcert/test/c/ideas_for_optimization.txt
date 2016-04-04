@@ -1,0 +1,198 @@
+aes:
+ - teach compcert the AES instruction, peephole it
+ - in lieu of that, maybe do something else
+almabench:
+ - vectorize inner loop (almabench.c:234-240)
+bisect:
+ - sturm function is only hot function. 99% of time spent there
+ - I don't see much to do here, but feel free to take a look
+   movsd	48(%esp), %xmm5
+   movsd	0(%esi,%edi,8), %xmm3
+   movsd	36(%esp), %xmm1
+   subsd	%xmm1, %xmm3
+   movsd	.L105, %xmm2 # 4503599627370496
+   mulsd	%xmm2, %xmm5
+   subsd	%xmm5, %xmm3
+chomp:
+ - equal_data and get_value are hot functions
+ - Daryl has a bunch of stuff in flight for this
+fannkuch:
+ - one function. profile and find loop
+fft:
+fftw:
+fib:
+integr:
+ - integrate things
+ - passes a function pointer around
+ - integr function is hottest, square also pretty hot
+ - the copy of %edx to 0(%esp) in square is useless, but not peep-able
+ - 
+knucleotide:
+ - spends most of its time in toupper in libc
+ - only ~20% of exec time is in actual program
+lists:
+ - inner loop is already 4 instrs, probably not much we can do
+mandelbrot:
+nbody:
+nsieve:
+ - not much to do here, only thing would be with labels
+ - we don't support loops enough to do anything at all
+perlin:
+ - noise/lerp/grad hottest, after libm
+ - might get a little mileage out of lea -> add in noise
+ - could get more speed if we could futz with calling conv
+qsort:
+sha1:
+  - hot is sha1_transform
+  - looks very hard to vectorize
+  - just 5 loops
+  - look at bottom 4 loops, try to optimize
+sha3:
+  - siphash24 peep also fires here
+  - We can get huge speedup with vectorizing xor here
+  - hot loop is made of sections, lots of xor going on
+  - also we have shrl;shldl;sall;orl -> shldl;shldl trick to pull again *****
+  - We should also do something so shldl feeds stores in the right order (does that matter?)
+  - Two main kinds of sections I should try to optimize (maybe 3)
+
+	
+	movl	8(%edi), %esi
+	movl	12(%edi), %ebp
+	movl	48(%edi), %ecx
+	movl	52(%edi), %eax
+	xorl	%eax, %ebp
+	xorl	%ecx, %esi
+	movl	88(%edi), %ecx
+	movl	92(%edi), %eax
+	xorl	%eax, %ebp
+	xorl	%ecx, %esi
+	movl	128(%edi), %eax
+	movl	132(%edi), %ecx
+	xorl	%ecx, %ebp
+	xorl	%eax, %esi
+	movl	168(%edi), %ecx
+	movl	172(%edi), %eax
+	xorl	%eax, %ebp
+	xorl	%ecx, %esi
+	movl	%esi, 48(%esp)
+	movl	%ebp, 52(%esp)
+
+
+  	movsd	8(%edi), %xmm0
+	xorpd 	48(%edi), %xmm0
+	xorpd	88(%edi), %xmm0
+	xorpd 	128(%edi), %xmm0
+	xorpd	168(%edi), %xmm0
+	movsd	%xmm0, 48(%esp)
+
+
+peep1: (currently not working)
+	movl	48(%esp), %ebx
+	movl	52(%esp), %edx
+	notl	%edx
+	notl	%ebx
+	movl	56(%esp), %esi
+	movl	60(%esp), %ebp
+	andl	%ebp, %edx
+	andl	%esi, %ebx
+	xorl	%edx, %ecx
+	xorl	%ebx, %eax
+	movl	24(%esp), %edx
+	movl	%eax, 0(%edi,%edx,8)
+	movl	%ecx, 4(%edi,%edx,8)
+
+to:
+
+	movsd	40(%esp), %xmm2
+	movsd	48(%esp), %xmm0
+	movsd	56(%esp), %xmm1
+	andnpd 	%xmm1, %xmm0
+	xorpd	%xmm0, %xmm2
+	movl 	24(%esp), %edx
+	movsd	%xmm2, 0(%edi,%edx,8)
+
+
+peep2: (common case)
+	movl	8(%edi,%edx,8), %esi
+	movl	12(%edi,%edx,8), %ebx
+	movl	56(%esp), %eax
+	movl	60(%esp), %edx
+	notl	%edx
+	notl	%eax
+	movl	64(%esp), %ecx
+	movl	68(%esp), %ebp
+	andl	%ebp, %edx
+	andl	%ecx, %eax
+	xorl	%edx, %ebx
+	xorl	%eax, %esi
+	movl	24(%esp), %edx
+	movl	%esi, 8(%edi,%edx,8)
+	movl	%ebx, 12(%edi,%edx,8)
+
+to:
+
+	movupd	8(%edi,%edx,8), %xmm0
+	movupd	56(%esp), %xmm1
+	movupd	64(%esp), %xmm2
+	andnpd	%xmm2, %xmm1
+	xorpd	%xmm1, %xmm0
+	movl	24(%esp), %edx
+	movupd	%xmm0, 8(%edi,%edx,8)
+
+
+
+siphash24:
+  - repeated calls to SIPROUND
+  - most of the work is left shift, bitwise or with right shift
+  - xavier may already turn that into a rotate, but if not we can
+  - general flow is 1. add, 2. rotate left 3. xor 4. sometimes rotl
+  - hot loop is L100 -> jmp L100
+  - there are a lot of loads to ebx, but reg alloc sucks
+  - why are they generating builtin addl? we should get rid of that as a builtin
+  - that'll let us peephole optimize around it
+  - sall; shrl; orl; -> shldl ******
+spectral:
+  - everything calls eval_A. If we can optimized that...
+  - make this code better:
+	movl	0(%edx), %ebx
+	movl	4(%edx), %ecx
+	movsd	.L100, %xmm0 # 1
+	leal	0(%ebx,%ecx,1), %eax
+	leal	1(%ebx,%ecx,1), %ecx
+	imull	%ecx, %eax
+	testl	%eax, %eax
+	leal	1(%eax), %ecx
+	cmovl	%ecx, %eax
+	sarl	$1, %eax
+	leal	1(%eax,%ebx,1), %ecx
+	cvtsi2sd %ecx, %xmm1
+	divsd	%xmm1, %xmm0
+	movsd	%xmm0, 8(%esp)
+	fldl	8(%esp)
+
+
+	movl	0(%edx), %ebx
+	movl	4(%edx), %ecx
+	movsd	.L100, %xmm0 # 1
+	leal	0(%ebx,%ecx,1), %eax
+	leal	1(%ebx,%ecx,1), %ecx
+	imull	%ecx, %eax
+
+	testl	%eax, %eax
+	setl	%cl
+	movzbl  %cl, %ecx
+	addl    %ecx, %eax
+
+	sarl	$1, %eax
+	leal	1(%eax,%ebx,1), %ecx
+	cvtsi2sd %ecx, %xmm1
+	divsd	%xmm1, %xmm0
+	movsd	%xmm0, 8(%esp)
+	fldl	8(%esp)
+
+  - 1. change second leal into an addl (ecx <- eax + 1)
+  - 2. 
+vmach:
+  - this is an interpreter. the long loop (2000 times) is wordcode_tak.
+  - iirc xavier already optimized control flow here, we can look at each case though
+  
