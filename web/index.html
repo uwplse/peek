@@ -13,13 +13,15 @@
 	<a href="http://uwplse.org">UW PLSE</a>
 	|
 	<a href="pldi16.pdf">PLDI 2016 preprint</a>
+	|
+	<a href="https://github.com/uwplse/peek">Source Code</a>
 	<div id="intro">
 		<h3>Abstract</h3>
 		<p>
-			Transformations over assembly code are common in many compilers. Such transformations are useful in applications ranging from peephole optimizations to software fault isolation. These transformations are also some of the most bug-dense compiler components. Such bugs could be eliminated by formally verifying the compiler, but state of-the-art formally verified compilers like CompCert do not support assembly-level program transformations. This paper presents Peek, a framework for expressing, verifying, and running assembly-level program transformations in CompCert. Peek contributes four new components: a lower level semantics for CompCert x86 syntax, a liveness analysis, a library for expressing and verifying peephole optimizations, and a verified peephole optimization pass built into CompCert. Each of these is accompanied by a correctness proof in Coq against realistic assumptions about the calling convention and the system memory allocator.
+			Transformations over assembly code are common in many compilers. These transformations are also some of the most bug-dense compiler components. Such bugs could be eliminated by formally verifying the compiler, but state of-the-art formally verified compilers like CompCert do not support assembly-level program transformations. This paper presents Peek, a framework for expressing, verifying, and running assembly-level program transformations in CompCert. Peek contributes four new components: a lower level semantics for CompCert x86 syntax, a liveness analysis, a library for expressing and verifying peephole optimizations, and a verified peephole optimization pass built into CompCert. Each of these is accompanied by a correctness proof in Coq against realistic assumptions about the calling convention and the system memory allocator.
 			<br>
 			<br>
-			Verifying peephole optimizations in Peek requires proving only a set of local properties, which we have proved are sufficient to ensure global transformation correctness. We have proven these local properties for 26 peephole transformations from the literature. We discuss the development of our new assembly semantics, our liveness analysis, representation of program transformations, and execution engine, describe the verification challenges of each component, and detail techniques we applied to mitigate the proof burden.
+			Verifying peephole optimizations in Peek requires proving only a set of local properties, which we have proved are sufficient to ensure global transformation correctness. We have proven these local properties for 28 peephole transformations from the literature. We discuss the development of our new assembly semantics, our liveness analysis, representation of program transformations, and execution engine, describe the verification challenges of each component, and detail techniques we applied to mitigate the proof burden.
 		</p>
 	</div>
 		
