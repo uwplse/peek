@@ -32,13 +32,14 @@ Require Import AddrmodeEq.
 Require Import UseBasic.
 
 (*IMPORT PEEPHOLES*)
-Require Import Peep_LoadStore.
-Require Import Peep_ExtendedShift.
-Require Import Peep_ExtendedShift2. 
-Require Import Peep_HmacLoadElim. 
-Require Import Peep_LeaAdd.
-Require Import Peep_LeaAdd2.
-Require Import Peep_XorToMov0.
+(* Require Import Peep_LoadStore. *)
+(* Require Import Peep_ExtendedShift. *)
+(* Require Import Peep_ExtendedShift2.  *)
+(* Require Import Peep_HmacLoadElim.  *)
+(* Require Import Peep_LeaAdd. *)
+(* Require Import Peep_LeaAdd2. *)
+(* Require Import Peep_XorToMov0. *)
+Require Import Peep_ZeroSub.
 
 (* Require Import Peep_VecMul. 
 Require Import Peep_TestThenLea. *)
@@ -74,13 +75,14 @@ Require Import Aiken7.*)
 (* We hook all of them into CompCert here *)
 Definition gen_rewrites : list (code -> list StepEquiv.rewrite) :=
   (* START *)
-         Peep.store_load ::
-         extended_shift :: 
-         extended_shift_2 :: 
-         lea_add ::
-         lea_add2 ::
-         hmac_load_elim ::
-         xor_to_mov_0 ::
+         (* Peep.store_load :: *)
+         (* extended_shift ::  *)
+         (* extended_shift_2 ::  *)
+         (* lea_add :: *)
+         (* lea_add2 :: *)
+         (* hmac_load_elim :: *)
+         (* xor_to_mov_0 :: *)
+         zero_sub ::
          (*xor_vec ::*) (*TODO possibly useful*)
          (* test_then_lea :: *)
          (*div_2_to_shr ::*)
