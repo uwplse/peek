@@ -61,43 +61,89 @@ Section STORE_LOAD.
   Lemma peep_store_load_selr :
     StepEquiv.step_through_equiv_live (fnd peep_store_load_defs) (rpl peep_store_load_defs) (lv_in peep_store_load_defs) (lv_out peep_store_load_defs).
   Proof.
-    admit.
-    (* assert (exists rs' m', exec_store_bits (env tprog) Mint32 mr a rsr r nil = Next rs' m'). *)
-    (* { *)
-    (*   assert ((forall (id : ident) (ofs : int), *)
-    (*        Genv.symbol_address (env tprog) id ofs = *)
-    (*        Genv.symbol_address (env prog) id ofs)) by admit. *)
-    (*   simpl_exec. *)
-    (*   simpl_match_hyp. *)
-    (*   unfold exec_store_bits in *.     *)
-    (*   erewrite eval_addrmode_bits_transf.       *)
-    (*   2: eauto. *)
+    prep_l.
+    step_l.
+    step_l.
+    prep_r.
+    (* step_r can't handle building loads or stores well *)
+    prep_exec_instr.
 
-    (*   unfold storev_bits in *. *)
-    (*   simpl_match_hyp. *)
-    (*   exploit eq_mem_store. *)
-    (*   eauto. *)
-    (*   2: eauto. *)
-    (*   eauto. *)
-    (*   intros. *)
-    (*   break_exists. break_and. *)
-    (*   exploit use_addr_correct_bits. *)
-    (*   intros. *)
-    (*   specialize (H12 p). *)
-    (*   conclude H12 eauto. *)
-    (*   eapply H12. *)
-    (*   intros. *)
-    (*   instantiate (1 := (env prog)) in H15. *)
-    (*   rewrite val_eq_or in H15. *)
-    (*   break_or; try congruence. *)
-    (*   rewrite <- H16. *)
-    (*   rewrite Heqv0. *)
-    (*   rewrite val_eq_or in H11. *)
-    (*   rewrite H1. *)
-    (*   eauto.       *)
-    (* } *)
-    (*Todo prove regs and mem eq*)
-    (*Use: use_addr_eval_addrmode_bits*)
+    (* manually solve subgoal *)
+    instantiate (1 := mr). (* kinda annoying *)
+    simpl. simpl in H33.
+    unfold exec_store_bits in H33.
+    break_match_hyp; try congruence.
+    inv H30. inv H33.
+    unfold exec_store_bits.
+    unfold storev_bits in *.
+    break_match_hyp; try congruence.
+    erewrite eval_addrmode_bits_transf;
+      try solve [intros; rewrite Hsym; auto].
+    erewrite use_addr_eval_addrmode_bits; eauto; try congruence.
+    simpl.
+    NP _app eq_mem_store MemBits.store_bits.
+    break_and.
+    collapse_match.
+    eauto.
+
+    repeat break_exists.
+
+    step_r.
+    step_r.
+    eexists; eexists; split.
+
+    (* prove mem eq *)
+    assert (x5 = md').
+    {
+      simpl in H4. unfold exec_store_bits in H4.
+      specialize (H4 x3).
+      break_match_hyp; try congruence.
+    } idtac.
+    subst.
+    eapply H22.
+    prep_eq.
+
+    simpl in *.
+    repeat (break_match_hyp; try congruence); subst.
+    repeat opt_inv; subst. clear H19. clear H20.
+    assert (m0 = m). {
+      unfold exec_load_bits in H13.
+      break_match_hyp; try congruence.
+    } idtac.
+    subst.
+    split. Focus 2.
+    specialize (H22 x3).
+    unfold exec_store_bits in *.
+    repeat break_match_hyp; try congruence.
+
+    inv H14. inv H22.
+    eapply eq_mem_storev_bits; try eassumption.
+    right. 
+    erewrite eval_addrmode_bits_transf;
+      try solve [intros; rewrite Hsym; auto].
+    symmetry.
+    erewrite use_addr_eval_addrmode_bits; try apply H5; eauto; try congruence.
+    erewrite eval_addrmode_bits_transf;
+      try solve [intros; rewrite Hsym; auto].
+    unfold storev_bits in Heqo7.
+    break_match_hyp; try congruence.
+
+
+    (* Prove reg eq *)
+    specialize (H22 x3).
+    intros. repeat break_or; try inv_false;
+    simpl in *; unfold exec_load_bits in *;
+    unfold exec_store_bits in *;
+    repeat (break_match_hyp; try congruence);
+    repeat st_inv.
+    (* PC *)
+    preg_simpl. rewrite Heqv. rewrite Heqv0.
+    eapply val_eq_add; try eapply val_eq_add; eauto;
+    try solve [simpl; reflexivity].
+    (* r *)
+    preg_simpl.
+    (* Here we need to appeal to loading a stored value val_eq to original result *)
+    admit.
   Qed.
 
   Definition peep_store_load_proofs : rewrite_proofs :=
@@ -110,6 +156,7 @@ Section STORE_LOAD.
     concrete = fnd peep_store_load_defs ->
     StepEquiv.rewrite.
   Proof.
+    
     intros.
     
     refine (
